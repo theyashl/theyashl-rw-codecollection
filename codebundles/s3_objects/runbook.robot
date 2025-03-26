@@ -33,11 +33,12 @@ Suite Initialization
     ...    pattern=\w*
 
     Set Suite Variable    ${AWS_REGION}    ${AWS_REGION}
+    Set Suite Variable    ${AWS_ENDPOINT}    ${AWS_ENDPOINT}
     Set Suite Variable    ${AWS_ACCESS_KEY_ID}    ${AWS_ACCESS_KEY_ID}
     Set Suite Variable    ${AWS_SECRET_ACCESS_KEY}    ${AWS_SECRET_ACCESS_KEY}
     Set Suite Variable
-    ...    &{env}
-    ...    AWS_REGION=${AWS_REGION}
+    ...    ${env}
+    ...    {"AWS_ENDPOINT":"${AWS_ENDPOINT}", "AWS_ACCESS_KEY_ID":"${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY":"${AWS_SECRET_ACCESS_KEY}"}
 
 *** Tasks ***
 Check AWS S3 Bucket Objects
