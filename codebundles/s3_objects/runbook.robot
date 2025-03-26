@@ -47,4 +47,5 @@ Check AWS S3 Bucket Objects
     ...    env=${env}
     ...    secret__AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
     ...    secret__AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-    RW.Core.Push Metric    int(${process.stdout})
+    ${msg}=    MyKeywords.S3Objects.get_report_msg   int(${process.stdout})
+    RW.Core.Add Pre To Report    ${msg}
