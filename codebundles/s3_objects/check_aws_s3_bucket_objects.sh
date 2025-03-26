@@ -25,6 +25,4 @@ for bucket_name in $bucket_names; do
 done
 
 # Print total count
-echo "$total_count"
-
-
+printf "%s" "$total_count"
