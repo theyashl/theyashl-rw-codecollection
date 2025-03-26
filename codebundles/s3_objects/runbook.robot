@@ -2,9 +2,9 @@
 Documentation      This taskset uses aws local deployment to check the number of objects present in given bucket
 Metadata           Author        Prathamesh
 Metadata           Display Name  S3 Objects List
-Library            BuiltIn
 Library            RW.Core
 Library            RW.CLI
+Library            MyKeywords.S3Objects
 
 Suite Setup        Suite Initialization
 
