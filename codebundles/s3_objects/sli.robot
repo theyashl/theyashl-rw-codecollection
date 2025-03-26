@@ -47,4 +47,5 @@ Check AWS S3 Bucket Objects
     ...    env=${env}
     ...    secret__AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
     ...    secret__AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-    RW.Core.Push Metric    ${process.stdout}
+    ${clean_output}    Evaluate    int("${process.stdout}".strip())
+    RW.Core.Push Metric    ${clean_output}
