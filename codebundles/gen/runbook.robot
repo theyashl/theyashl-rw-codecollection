@@ -19,7 +19,7 @@ ${TASK_TITLE}
     [Tags]    bash    cli    generic
     
     ${rsp}=    RW.CLI.Run Cli
-    ...    cmd=${BASH_COMMAND}
+    ...    cmd=${GEN_CMD}
     
     ${history}=    RW.CLI.Pop Shell History
     RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
@@ -29,7 +29,7 @@ ${TASK_TITLE}
 
 *** Keywords ***
 Suite Initialization
-    ${BASH_COMMAND}=    RW.Core.Import User Variable    BASH_COMMAND
+    ${GEN_CMD}=    RW.Core.Import User Variable    GEN_CMD
     ...    type=string
     ...    description=The bash command to run
     ...    pattern=\w*
@@ -41,4 +41,4 @@ Suite Initialization
     ...    example="Run a bash command"
     
     Set Suite Variable    ${TASK_TITLE}    ${TASK_TITLE}
-    Set Suite Variable    ${BASH_COMMAND}    ${BASH_COMMAND}
+    Set Suite Variable    ${GEN_CMD}    ${GEN_CMD}
