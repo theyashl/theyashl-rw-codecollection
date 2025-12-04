@@ -43,9 +43,9 @@ Suite Initialization
     ...    default=bash
     ${GEN_CMD}=    RW.Core.Import User Variable    GEN_CMD
     ...    type=string
-    ...    description=The bash command to run
+    ...    description=base64 encoded command to run
     ...    pattern=\w*
-    ...    example="echo 'Hello World'"
+    ...    example="ZWNobyAnSGVsbG8gV29ybGQn"
     ${TASK_TITLE}=    RW.Core.Import User Variable    TASK_TITLE
     ...    type=string
     ...    description=The name of the task to run. This is useful for helping find this generic task with RunWhen Digital Assistants. 
