@@ -18,8 +18,16 @@ ${TASK_TITLE}
     [Documentation]    Runs a user provided bash command and adds the output to the report.
     [Tags]    bash    cli    generic
     
+    ${decode_op}=    RW.CLI.Run Cli
+    ...    cmd=echo '${GEN_CMD}' | base64 -d
+
+    ${command}=    Catenate    SEPARATOR=\n
+    ...    ${INTERPRETER} << 'EOF'
+    ...    ${decode_op.stdout}
+    ...    EOF
+    
     ${rsp}=    RW.CLI.Run Cli
-    ...    cmd=${GEN_CMD}
+    ...    cmd=${command}
     
     ${history}=    RW.CLI.Pop Shell History
     RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
@@ -29,6 +37,10 @@ ${TASK_TITLE}
 
 *** Keywords ***
 Suite Initialization
+    ${INTERPRETER}=    RW.Core.Import User Variable    INTERPRETER
+    ...    type=string
+    ...    description="Shell: bash or python"
+    ...    default=bash
     ${GEN_CMD}=    RW.Core.Import User Variable    GEN_CMD
     ...    type=string
     ...    description=The bash command to run
@@ -41,4 +53,5 @@ Suite Initialization
     ...    example="Run a bash command"
     
     Set Suite Variable    ${TASK_TITLE}    ${TASK_TITLE}
+    Set Suite Variable    ${INTERPRETER}    ${INTERPRETER}
     Set Suite Variable    ${GEN_CMD}    ${GEN_CMD}
