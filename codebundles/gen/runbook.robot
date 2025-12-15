@@ -67,6 +67,15 @@ Suite Initialization
     ...    description="JSON string of environment variables to values"
     ...    example="{"env_name": "env_value"}"
     ${raw_env_vars}=    Evaluate    json.loads('${env_vars_json}' if '${env_vars_json}' not in ['null', '', 'None'] else '{}')    modules=json
+    ${OS_PATH}=    Get Environment Variable    PATH
+    Run Keyword If    'PATH' in ${raw_env_vars}
+    ...    Set To Dictionary
+    ...    ${raw_env_vars}
+    ...    PATH=${raw_env_vars['PATH']}:${OS_PATH}
+    Run Keyword If    'PATH' not in ${raw_env_vars}
+    ...    Set To Dictionary
+    ...    ${raw_env_vars}
+    ...    PATH=${OS_PATH}
     
     # secrets management
     ${secrets_json}=    RW.Core.Import User Variable    SECRET_ENV_MAP
