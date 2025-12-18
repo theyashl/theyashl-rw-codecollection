@@ -28,15 +28,43 @@ ${TASK_TITLE}
     ${decode_op}=    RW.CLI.Run Cli
     ...    cmd=echo '${GEN_CMD}' | base64 -d
 
-    ${command}=    Catenate    SEPARATOR=\n
-    ...    ${INTERPRETER} << 'EOF'
+    ${command}=    Run Keyword If    '${INTERPRETER}' == 'python'
+    ...    Catenate    SEPARATOR=\n
+    ...    python << 'EOF'
     ...    ${decode_op.stdout}
+    ...    import json, os
+    ...    resp = main()
+    ...    path = os.path.join(os.environ["CODEBUNDLE_TEMP_DIR"], "issues_data.json")
+    ...    f = open(path, "w", encoding="utf-8")
+    ...    json.dump(resp, f)
+    ...    f.close()
+    ...    EOF
+    ...    ELSE
+    ...    Catenate    SEPARATOR=\n
+    ...    bash << 'EOF'
+    ...    ${decode_op.stdout}
+    ...    ISSUES_FILE="$CODEBUNDLE_TEMP_DIR/issues_data.json"
+    ...    exec 3> "$ISSUES_FILE"
+    ...    main
+    ...    exec 3>&-
     ...    EOF
     
     ${rsp}=    RW.CLI.Run Cli
     ...    cmd=${command}
     ...    env=${raw_env_vars}
     ...    &{secret_kwargs}
+
+    File Should Exist    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
+    
+    ${issues_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
+    ${issues}=    Evaluate    json.load(open(r'''${ISSUES_FILE}'''))    json
+
+    FOR    ${issue}    IN    @{issues}
+        Log    Title: ${issue['issue title']}
+        Log    Description: ${issue['issue description']}
+        Log    Severity: ${issue['issue severity']}
+        Log    Next Steps: ${issue['issue next steps']}
+    END
     
     ${history}=    RW.CLI.Pop Shell History
     RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
