@@ -60,10 +60,14 @@ ${TASK_TITLE}
     ${issues}=    Evaluate    json.load(open(r'''${ISSUES_FILE}'''))    json
 
     FOR    ${issue}    IN    @{issues}
-        Log    Title: ${issue['issue title']}
-        Log    Description: ${issue['issue description']}
-        Log    Severity: ${issue['issue severity']}
-        Log    Next Steps: ${issue['issue next steps']}
+        RW.Core.Add Issue
+        ...    title=${issue['issue title']}
+        ...    severity=${issue['issue severity']}
+        ...    expected=The script should produce no issues, indicating no errors were found.
+        ...    actual=Found issues output produced by the provided script, indicating errors were found.
+        ...    reproduce_hint=Run ${command} to fetch the data that triggered this issue.
+        ...    next_steps=${issue['issue next steps']}
+        ...    details=${issue['issue description']}
     END
     
     ${history}=    RW.CLI.Pop Shell History
