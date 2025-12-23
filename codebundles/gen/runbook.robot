@@ -54,6 +54,11 @@ ${TASK_TITLE}
     ...    env=${raw_env_vars}
     ...    &{secret_kwargs}
 
+    ${history}=    RW.CLI.Pop Shell History
+    RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
+    RW.Core.Add Pre To Report    Command stderr: ${rsp.stderr}
+    RW.Core.Add Pre To Report    Commands Used: ${history}
+
     File Should Exist    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
     
     ${issues_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
@@ -69,11 +74,6 @@ ${TASK_TITLE}
         ...    next_steps=${issue['issue next steps']}
         ...    details=${issue['issue description']}
     END
-    
-    ${history}=    RW.CLI.Pop Shell History
-    RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
-    RW.Core.Add Pre To Report    Command stderr: ${rsp.stderr}
-    RW.Core.Add Pre To Report    Commands Used: ${history}
 
 
 *** Keywords ***
