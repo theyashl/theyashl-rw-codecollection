@@ -3,3 +3,4 @@ ruamel.base>=1.0.0
 ruamel.yaml>=0.17.20
 requests>=2
 rw-cli-keywords>=0.0.19
+psycopg>=3.3.2
