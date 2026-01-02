@@ -108,6 +108,9 @@ Suite Initialization
     ...    Set To Dictionary
     ...    ${raw_env_vars}
     ...    PATH=${OS_PATH}
+    Set To Dictionary    ${raw_env_vars}
+    ...    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+    ...    REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
     
     # secrets management
     ${secrets_json}=    RW.Core.Import User Variable    SECRET_ENV_MAP
