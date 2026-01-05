@@ -1,8 +1,8 @@
 *** Settings ***
-Documentation       Gen Taskset
+Documentation       A CodeBundle that supports the generics editor in the RunWhen UI for bash and pythong scripts. 
 Metadata            Author    theyashl
-Metadata            Display Name    Gen Taskset
-Metadata            Supports    bash
+Metadata            Display Name    Generics Editor (BASH/PYTHON)
+Metadata            Supports    bash    python    RunWhen    Generic
 
 Library             BuiltIn
 Library             RW.Core
@@ -16,7 +16,7 @@ Suite Setup         Suite Initialization
 
 *** Tasks ***
 ${TASK_TITLE}
-    [Documentation]    Runs a user provided bash command and adds the output to the report.
+    [Documentation]    Executes a user provided bash or python script. 
     [Tags]    bash    cli    generic
     
     ${secret_kwargs}=    Create Dictionary
@@ -62,7 +62,7 @@ ${TASK_TITLE}
     File Should Exist    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
     
     ${issues_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
-    ${issues}=    Evaluate    json.load(open(r'''${ISSUES_FILE}'''))    json
+    ${issues}=    Evaluate    json.load(open(r'''${issues_file}''')) if os.path.exists(r'''${issues_file}''') and os.path.getsize(r'''${issues_file}''') > 0 else []    modules=json,os
 
     FOR    ${issue}    IN    @{issues}
         RW.Core.Add Issue
@@ -89,7 +89,7 @@ Suite Initialization
     ...    example="ZWNobyAnSGVsbG8gV29ybGQn"
     ${TASK_TITLE}=    RW.Core.Import User Variable    TASK_TITLE
     ...    type=string
-    ...    description=The name of the task to run. This is useful for helping find this generic task with RunWhen Digital Assistants. 
+    ...    description=A useful task title. This is useful for helping find this generic task with RunWhen Assistants. 
     ...    pattern=\w*
     ...    example="Run a bash command"
 
@@ -116,8 +116,8 @@ Suite Initialization
     ${secrets_json}=    RW.Core.Import User Variable    SECRET_ENV_MAP
     ...    type=string
     ...    description="JSON string of environment variables to secrets"
-    ...    example="{"env_name": "secret_name"}"
-    ${raw_secrets}=     Evaluate    json.loads('${secrets_json}' if '${secrets_json}' not in ['null', '', 'None'] else '{}')    modules=json
+    ...    example="['env_name']"
+    ${raw_secrets}=     Evaluate    json.loads('${secrets_json}' if '${secrets_json}' not in ['null', '', 'None'] else '[]')    modules=json
 
     ${secret_objs}=    Create Dictionary
     FOR    ${env_name}    IN    @{raw_secrets}
