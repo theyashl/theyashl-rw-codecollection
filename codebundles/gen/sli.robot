@@ -34,7 +34,7 @@ ${TASK_TITLE}
     ...    ${decode_op.stdout}
     ...    import json, os
     ...    resp = main()
-    ...    path = os.path.join(os.environ["CODEBUNDLE_TEMP_DIR"], "issues_data.json")
+    ...    path = os.path.join(os.environ["CODEBUNDLE_TEMP_DIR"], "metric_data.json")
     ...    f = open(path, "w", encoding="utf-8")
     ...    json.dump(resp, f)
     ...    f.close()
@@ -43,8 +43,8 @@ ${TASK_TITLE}
     ...    Catenate    SEPARATOR=\n
     ...    bash << 'EOF'
     ...    ${decode_op.stdout}
-    ...    ISSUES_FILE="$CODEBUNDLE_TEMP_DIR/issues_data.json"
-    ...    exec 3> "$ISSUES_FILE"
+    ...    METRIC_FILE="$CODEBUNDLE_TEMP_DIR/metric_data.json"
+    ...    exec 3> "$METRIC_FILE"
     ...    main
     ...    exec 3>&-
     ...    EOF
@@ -53,27 +53,11 @@ ${TASK_TITLE}
     ...    cmd=${command}
     ...    env=${raw_env_vars}
     ...    &{secret_kwargs}
-
-    ${history}=    RW.CLI.Pop Shell History
-    RW.Core.Add Pre To Report    Command stdout: ${rsp.stdout}
-    RW.Core.Add Pre To Report    Command stderr: ${rsp.stderr}
-    RW.Core.Add Pre To Report    Commands Used: ${history}
-
-    File Should Exist    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
     
-    ${issues_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/issues_data.json
-    ${issues}=    Evaluate    json.load(open(r'''${issues_file}''')) if os.path.exists(r'''${issues_file}''') and os.path.getsize(r'''${issues_file}''') > 0 else []    modules=json,os
-
-    FOR    ${issue}    IN    @{issues}
-        RW.Core.Add Issue
-        ...    title=${issue['issue title']}
-        ...    severity=${issue['issue severity']}
-        ...    expected=The script should produce no issues, indicating no errors were found.
-        ...    actual=Found issues output produced by the provided script, indicating errors were found.
-        ...    reproduce_hint=look at the SLX description for more details.
-        ...    next_steps=${issue['issue next steps']}
-        ...    details=${issue['issue description']}
-    END
+    ${metric_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/metric_data.json
+    ${metric}=    Evaluate    json.load(open(r'''${metric_file}''')) if os.path.exists(r'''${metric_file}''') and os.path.getsize(r'''${metric_file}''') > 0 else 0    modules=json,os
+    
+    RW.Core.Push Metric    ${metric}
 
 
 *** Keywords ***
