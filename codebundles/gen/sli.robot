@@ -57,6 +57,7 @@ ${TASK_TITLE}
     ${metric_file}=    Set Variable    ${raw_env_vars["CODEBUNDLE_TEMP_DIR"]}/metric_data.json
     ${metric}=    Evaluate    json.load(open(r'''${metric_file}''')) if os.path.exists(r'''${metric_file}''') and os.path.getsize(r'''${metric_file}''') > 0 else 0    modules=json,os
     
+    RW.Core.Push Metric    ${metric}    sub_name=metric
     RW.Core.Push Metric    ${metric}
 
 
